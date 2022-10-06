@@ -5,12 +5,17 @@ import './product_item.dart';
 
 class ProductsGrid extends StatelessWidget {
 
+  final bool showFavs;
+
+  ProductsGrid(this.showFavs);
+
   @override
   Widget build(BuildContext context) {
 
     //Note::::::
     final productsData = Provider.of<Products>(context);
-    final products = productsData.items;
+    //if showFavs is true the favoritesItems or else items::
+    final products = showFavs? productsData.favoritesItems:productsData.items;
 
     return GridView.builder(
         padding: const EdgeInsets.all(10),
@@ -21,9 +26,16 @@ class ProductsGrid extends StatelessWidget {
             crossAxisSpacing: 10,
             mainAxisSpacing: 10),
         itemCount: products.length,
-        itemBuilder: (ctx, i) => ProductItem(
-          products[i].id,
-            products[i].title, 
-            products[i].imageUrl));
+        //use .value in existing object when we reuse::
+        //change notifier provider cleans the old data/replacement automatically 
+        itemBuilder: (ctx, i) => ChangeNotifierProvider.value(
+          //create:(c)=>products[i],
+          value: products[i],
+          child: ProductItem(
+            // products[i].id,
+            //   products[i].title, 
+            //   products[i].imageUrl
+            ),
+        ));
   }
 }
