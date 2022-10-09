@@ -33,6 +33,23 @@ class CartItem extends StatelessWidget {
           vertical: 4,
         ),
       ),
+      //dialog box::
+      confirmDismiss: (direction) {
+        //scaffold is not required here as it is not attached to page::
+        //builder give there own context::note::
+        return showDialog(context: context, builder: (ctx) =>AlertDialog(
+          title: Text('Are you sure?'),
+          content: Text('Do you want to remove the item from the cart?'),
+          actions: [
+            FlatButton(onPressed: () {
+              Navigator.of(ctx).pop(false);
+            }, child: Text('No')),
+            FlatButton(onPressed: () {
+              Navigator.of(ctx).pop(true);
+            }, child: Text('Yes'))
+          ],
+        ) ,);
+      },
       //on dismiss function::
       onDismissed: (direction) {
         Provider.of<Cart>(context,listen: false).removeItem(productId);
