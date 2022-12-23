@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:shop_app/providers/Cart.dart';
 import 'package:shop_app/screens/cart_screen.dart';
 import 'package:shop_app/widgets/app_drawer.dart';
 import 'package:shop_app/widgets/product_item.dart';
 import 'package:provider/provider.dart';
+import 'package:http/http.dart' as http;
+import '../providers/products.dart';
 import '../providers/products.dart';
 import '../widgets/badge.dart';
 import '../widgets/products_grid.dart';
@@ -20,6 +23,34 @@ class ProductsOverviewScreen extends StatefulWidget {
 
 class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
   var _showFavoritesOnly = false;
+  var _isInit=true;
+  var _isLoading=false;
+  @override
+  void initState() {
+    //get request:::
+    //Provider.of<Products>(context).fetchAndSetProducts();//WON'T WORK HERE
+    // Future.delayed(Duration.zero).then((_){
+    //   Provider.of<Products>(context).fetchAndSetProducts();
+    // });
+    super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+      if(_isInit){
+        setState(() {
+          _isLoading=true;
+        });
+           Provider.of<Products>(context).fetchAndSetProducts().then((_){
+            setState(() {
+              _isLoading=false;
+            });
+           });
+      }
+      //so it does not run again::
+      _isInit=false;
+    super.didChangeDependencies();
+  }
   @override
   Widget build(BuildContext context) {
     //final productContainer=Provider.of<Products>(context,listen: false);
@@ -68,7 +99,9 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
         ],
       ),
       drawer: AppDrawer(),
-      body: ProductsGrid(_showFavoritesOnly),
+      body:_isLoading?Center(
+        child: CircularProgressIndicator(),
+      ) :ProductsGrid(_showFavoritesOnly),
     );
   }
 }

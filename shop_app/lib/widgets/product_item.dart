@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:shop_app/providers/Cart.dart';
 import '../providers/product.dart';
 import '../screens/product_detail_screen.dart';
+import '../providers/auth.dart';
 
 class ProductItem extends StatelessWidget {
   //const ProductItem({Key? key}) : super(key: key);
@@ -19,6 +20,8 @@ class ProductItem extends StatelessWidget {
     final product = Provider.of<Product>(context,
         listen: false); //use this syntax or consumer syntax
     final cart =Provider.of<Cart>(context,listen: false);
+    //Auth data::::::::::::
+    final authData=Provider.of<Auth>(context,listen: false);
     //print('product rebuild');
     //clipRRect forces child widget to get in certain shape::
     return ClipRRect(
@@ -46,7 +49,7 @@ class ProductItem extends StatelessWidget {
                   product.isFavorite ? Icons.favorite : Icons.favorite_border),
               color: Theme.of(context).accentColor,
               onPressed: () {
-                product.toggleFavoriteStatus();
+                product.toggleFavoriteStatus(authData.token as String,authData.userId as String);
               },
             ),
           ),
